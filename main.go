@@ -96,7 +96,6 @@ func CreateScript() (code string, err error) {
 	}
 
 	code = buf.String()
-
 	return
 }
 
@@ -116,9 +115,5 @@ func DoScript() (err error) {
 	cmd.Stderr = os.Stderr
 
 	err = cmd.Run()
-	if err != nil {
-		return
-	}
-
 	return
 }
