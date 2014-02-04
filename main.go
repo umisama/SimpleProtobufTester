@@ -6,11 +6,13 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
+	"strings"
 	"text/template"
 )
 
 const (
-	TEMP_SCRIPT_NAME = "tempscript_protobuf.go"
+	TEMP_SCRIPT_NAME = "./tempscript_protobuf.go"
 )
 
 var (
@@ -82,7 +84,7 @@ func CreateScript() (code string, err error) {
 		return
 	}
 
-	t := template.Must(template.ParseFiles("runner.go.tmpl"))
+	t := template.Must(template.ParseFiles(path.Dir(os.Args[0]) + "/runner.go.tmpl"))
 	buf := bytes.NewBuffer([]byte{})
 	t_dat := Template{
 		RootType: *flagRootType,
@@ -110,7 +112,9 @@ func WriteScript(code string) (err error) {
 }
 
 func DoScript() (err error) {
-	cmd := exec.Command("go", "run", TEMP_SCRIPT_NAME, "types.pb.go")
+	go_filename := strings.Replace(*flagProtobufFileName, ".proto", ".pb.go", -1)
+
+	cmd := exec.Command("go", "run", go_filename, TEMP_SCRIPT_NAME)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
