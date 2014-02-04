@@ -1,0 +1,41 @@
+package main
+
+import (
+	"bytes"
+	"code.google.com/p/goprotobuf/proto"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+)
+
+func main() {
+	obj := new({{.RootType}})
+	err := json.Unmarshal([]byte(json_data), obj)
+	if err != nil {
+		fmt.Printf("Error while json unmarshaling : %s\n", err.Error())
+		os.Exit(2)
+	}
+
+	buf, err := proto.Marshal(obj)
+	if err != nil {
+		fmt.Printf("Error while marshaling : %s\n", err.Error())
+		os.Exit(2)
+	}
+
+	resp, err := http.Post("{{.Endpoint}}", "application/x-protobuf", bytes.NewBuffer( buf ))
+	if err != nil {
+		fmt.Printf("Error on request : %s\n", err.Error())
+		os.Exit(2)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("Error on reading body : %s\n", err.Error())
+		os.Exit(2)
+	}
+	fmt.Printf("Status:\n %s\n\nBody:\n %s\n", resp.Status, string(body))
+}
+
+var json_data = `{{.JsonData}}`
