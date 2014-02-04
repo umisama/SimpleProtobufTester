@@ -1,0 +1,11 @@
+package main;
+
+message ExampleRoot {
+	optional ExampleChild Child = 1;
+	optional string Strings = 2;
+}
+
+message ExampleChild {
+	required int32 Integer = 1;
+	required bytes Bytes = 2;
+}
